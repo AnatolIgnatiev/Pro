@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Pro.Areas.Identity.Data;
 
-namespace Pro.Data
+namespace Pro.Models
 {
-    public class ProContext : IdentityDbContext<ProUser>
+    public class ProDbContext : IdentityDbContext<ProUser>
     {
-        public ProContext(DbContextOptions<ProContext> options)
+        public ProDbContext(DbContextOptions<ProDbContext> options)
             : base(options)
         {
         }

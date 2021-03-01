@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Pro.Areas.Identity.Data;
-using Pro.Data;
+using Pro.Models;
 
 [assembly: HostingStartup(typeof(Pro.Areas.Identity.IdentityHostingStartup))]
 namespace Pro.Areas.Identity
@@ -16,12 +16,12 @@ namespace Pro.Areas.Identity
         public void Configure(IWebHostBuilder builder)
         {
             builder.ConfigureServices((context, services) => {
-                services.AddDbContext<ProContext>(options =>
+                services.AddDbContext<ProDbContext>(options =>
                     options.UseSqlServer(
-                        context.Configuration.GetConnectionString("ProContextConnection")));
+                        context.Configuration.GetConnectionString("ProDbContextConnection")));
 
                 services.AddDefaultIdentity<ProUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                    .AddEntityFrameworkStores<ProContext>();
+                    .AddEntityFrameworkStores<ProDbContext>();
             });
         }
     }
