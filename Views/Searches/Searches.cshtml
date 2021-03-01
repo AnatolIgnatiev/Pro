@@ -1,0 +1,76 @@
+﻿
+<html>
+<head>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            padding: 3px 3px 3px 3px;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <h3>Выберите поиск для просмотра результатов</h3>
+    <div class="searches">
+        @foreach (Search search in ViewBag.searches)
+        {
+            <div class="header" data="@search.SearchId" style="cursor: pointer;">
+                <span>Date - @search.Date; SearchId - @search.SearchId </span>
+            </div>
+            <div class="content">
+            </div>
+        }
+    </div>
+
+    <script>
+        $(".header").click(function () {
+            var formData = new FormData();
+            $header = $(this);
+            $content = $header.next();
+            formData.append('searchId', $header[0].getAttribute('data'));
+            if ($content.is(':visible')) {
+                $content.slideToggle(500, function () {
+                    $content[0].innerHTML = "";
+                });
+            }
+            else {
+                $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("GetSearchResults", "Searches")',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        var headers = ["id", "brand", "originalPrice", "firstPrice", "secondPrice", "isSuccessful"];
+                        var resultsTable = document.createElement('table');
+                        resultsTable.id = "resultsTable";
+                        var tr = resultsTable.insertRow(-1);
+                        for (var i = 0; i < headers.length; i++) {
+                            var th = document.createElement('th');
+                            th.innerHTML = headers[i];
+                            tr.appendChild(th);
+                        };
+                        for (var i = 0; i < data.length; i++) {
+                            var tr = resultsTable.insertRow(-1);
+                            for (var j = 0; j < headers.length; j++) {
+                                tr.insertCell(-1);
+                            };
+                            var cells = tr.cells;
+                            cells[0].innerHTML = data[i].id;
+                            cells[1].innerHTML = data[i].brand;
+                            cells[2].innerHTML = data[i].originalPrice;
+                            cells[3].innerHTML = data[i].firstPrice;
+                            cells[4].innerHTML = data[i].secondPrice;
+                            cells[5].innerHTML = data[i].isSuccessful;
+                        };
+                        $content[0].innerHTML = "";
+                        $content[0].appendChild(resultsTable);
+                        $content.slideToggle(500);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

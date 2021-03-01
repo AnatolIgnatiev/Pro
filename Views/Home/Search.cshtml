@@ -1,0 +1,13 @@
+﻿
+@{
+    ViewData["Title"] = "Search Results";
+}
+<ul>
+    {
+    @{ foreach (var message in ViewBag.data)
+        {
+            <li>@message</li>
+        }}
+
+    }
+</ul>

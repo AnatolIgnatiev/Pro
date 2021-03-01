@@ -1,0 +1,113 @@
+﻿
+@{
+    ViewData["Title"] = "Добавление файла";
+}
+<html>
+<head>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            padding: 3px 3px 3px 3px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="~/js/signalr/dist/browser/signalr.js"></script>
+        <script src="~/js/site.js"></script>
+        <h3>@ViewBag.Message</h3>
+        <h3>Выберите файл для загрузки</h3>
+        <form asp-controller="Home" method="post" enctype="multipart/form-data">
+            <div id="div">
+                <input id="FileProvider" type="file" name="uploadedFiles" multiple /><br><br>
+                <input id="Search" type="button" value="Поиск" /><br><br>
+                <input id="SkipReqest" type="button" value="Пропустить запрос" disabled /><br><br>
+                <input id="Cancel" type="button" value="Отмена" disabled /><br><br>
+                <input id="Retry" type="button" value="Retry" disabled /><br><br>
+            </div>
+        </form>
+    </div>
+    <div id="currentSearchId"></div>
+    <div id="placeholder"></div><br><br>
+    <label>Search progress:</label><br />
+    <div class="progress">
+        <div id="progressBar" class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+    </div><br><br>
+    <div id="searachResults"></div><br><br>
+
+    <script>
+            $("#Search").click(function ()
+            {
+                document.getElementById('searachResults').innerHTML='';
+                var file_data = $("#FileProvider").prop("files");
+                var formData = new FormData();
+                formData.append('connectionId', connection.connectionId);
+                document.getElementById('Cancel').disabled = false;
+                document.getElementById('SkipReqest').disabled = false;
+                for (var i = 0; i < file_data.length; i++)
+                {
+                    formData.append("uploadedFiles", file_data[i]);
+
+                }
+                $.ajax(
+                    {
+                        type: 'POST',
+                        url: '@Url.Action("Search", "Home")',
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (data) {
+                            document.getElementById('currentSearchId').innerText = data;
+                            document.getElementById('Retry').disabled = false;
+                            document.getElementById('Cancel').disabled = true;
+                            document.getElementById('SkipReqest').disabled = true;
+                        }
+                    }
+                );
+            });
+
+            $("#Retry").click(function ()
+            {
+                document.getElementById('Retry').disabled = true;
+                document.getElementById('Cancel').disabled = false;
+                document.getElementById('SkipReqest').disabled = false;
+                $.ajax(
+                    {
+                        type: 'POST',
+                        url: '@Url.Action("Retry", "Home")',
+                        data: { searchId: $("#currentSearchId")[0].innerText, connectionId: connection.connectionId},
+                        dataType: "text",
+                        success: function () {
+                            document.getElementById('Retry').disabled = false;
+                            document.getElementById('Cancel').disabled = true;
+                            document.getElementById('SkipReqest').disabled = true;
+                        }
+                    }
+                );
+            });
+
+            $("#SkipReqest").click(function () {
+                $.ajax(
+                    {
+                        type: 'POST',
+                        url: '@Url.Action("SkipCurrentReqest", "Home")',
+                        data: { connectionId: connection.connectionId},
+                        dataType: "text"
+                    }
+                );
+            });
+
+            $("#Cancel").click(function () {
+                $.ajax(
+                    {
+                        type: 'POST',
+                        url: '@Url.Action("CanceleSearch", "Home")',
+                        data: { connectionId: connection.connectionId},
+                        dataType: "text"
+                    }
+                );
+            });
+    </script>
+</body>
+</html>
