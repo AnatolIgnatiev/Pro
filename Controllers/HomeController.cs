@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
@@ -16,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace Pro.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -33,6 +35,11 @@ namespace Pro.Controllers
             _logger = logger;
             _hubContext = hubContext;
 
+        }
+
+        public IActionResult Index()
+        {
+                return View();
         }
         private List<SearchRequest> GetFailedReqests(string searchId)
         {
@@ -101,7 +108,7 @@ namespace Pro.Controllers
                                 IsSuccessful = searchResult.IsSuccessful
                             };
                         }
-                        
+
                         db.Results.AddAsync(result);
                         db.SaveChanges();
                         isSucessful = true;
@@ -114,16 +121,10 @@ namespace Pro.Controllers
             }
             return isSucessful;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         public void CanceleSearch(string connectionId)
         {
             searchProcessor.CanceleSearch(connectionId);
         }
-
         public void SkipCurrentReqest(string connectionId)
         {
             searchProcessor.SkipCurrentReqest(connectionId);
@@ -169,18 +170,14 @@ namespace Pro.Controllers
             _hubContext.Clients.Client(connectionId).SendAsync("ReceiveCurrentResult", result).Wait();
             SaveSearchResults(result, searchId, updateExistingResults);
         }
-
         private void SearchProcessor_ProgressChagned(int progress, string connectionId)
         {
             _hubContext.Clients.Client(connectionId).SendAsync("ProgressChanged", progress).Wait();
         }
-
-
         private void SearchProcessor_SearchReqestChanged(string searchReqestMessage, string connectionId)
         {
             _hubContext.Clients.Client(connectionId).SendAsync("ReceiveMessage", searchReqestMessage).Wait();
         }
-
 
         public IActionResult Privacy()
         {

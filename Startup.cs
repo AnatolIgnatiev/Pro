@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Pro.Models;
 using Pro.Hubs;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Pro
 {
@@ -29,6 +30,12 @@ namespace Pro
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ProDBContext>(options =>
                 options.UseSqlServer(connection));
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+                    options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+                });
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddSignalR();
