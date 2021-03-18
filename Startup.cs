@@ -17,6 +17,7 @@ namespace Pro
 {
     public class Startup
     {
+        //smth
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
