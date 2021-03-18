@@ -30,6 +30,11 @@ namespace Pro
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ProDBContext>(options =>
                 options.UseSqlServer(connection));
+            services.AddAuthorization(options => 
+            {
+                options.AddPolicy("AuthorizedOnly", policy => policy.RequireRole("admin", "user"));
+                options.AddPolicy("Admin", policy => policy.RequireRole("admin"));
+            });
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
@@ -54,7 +59,6 @@ namespace Pro
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
             app.UseHttpsRedirection();

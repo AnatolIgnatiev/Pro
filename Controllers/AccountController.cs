@@ -17,6 +17,7 @@ namespace Pro.Controllers
     {
         private ProDBContext _context;
         private PasswordHasher hasher;
+
         public AccountController(ProDBContext context)
         {
             _context = context;

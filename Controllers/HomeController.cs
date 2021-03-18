@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace Pro.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "AuthorizedOnly")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -39,7 +39,7 @@ namespace Pro.Controllers
 
         public IActionResult Index()
         {
-                return View();
+            return View();
         }
         private List<SearchRequest> GetFailedReqests(string searchId)
         {
@@ -166,7 +166,7 @@ namespace Pro.Controllers
 
         private void SearchProcessor_CurrentSearchReqestCompleted(SearchResult result, string searchId, bool updateExistingResults, string connectionId)
         {
-            
+
             _hubContext.Clients.Client(connectionId).SendAsync("ReceiveCurrentResult", result).Wait();
             SaveSearchResults(result, searchId, updateExistingResults);
         }

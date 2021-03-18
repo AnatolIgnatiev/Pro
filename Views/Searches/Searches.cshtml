@@ -14,9 +14,10 @@
     <div class="searches">
         @foreach (Search search in ViewBag.searches)
         {
-            <div class="header" data="@search.SearchId" style="cursor: pointer;">
-                <span>Date - @search.Date; SearchId - @search.SearchId </span>
-            </div>
+        <div class="header" data="@search.SearchId" style="cursor: pointer; border: solid; margin-bottom: 5px">
+            <span>Date - @search.Date;</span>
+            
+        </div>
             <div class="content">
             </div>
         }

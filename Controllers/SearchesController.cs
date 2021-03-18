@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Pro.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Pro.Controllers
 {
+    [Authorize(Policy = "Admin")]
     public class SearchesController : Controller
     {
         public IActionResult Searches()
